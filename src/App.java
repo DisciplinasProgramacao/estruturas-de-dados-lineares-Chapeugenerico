@@ -1,9 +1,11 @@
 import java.nio.charset.Charset;
+import java.sql.Date;
 import java.time.LocalDate;
 import java.util.Scanner;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.function.Predicate;
 
 public class App {
 
@@ -21,6 +23,8 @@ public class App {
 
     /** Pilha de pedidos */
     static Pilha<Pedido> pilhaPedidos = new Pilha<>();
+
+    static Lista<Pedido> listaPedidos = new Lista<>();
         
     static void limparTela() {
         System.out.print("\033[H\033[2J");
@@ -64,6 +68,8 @@ public class App {
         System.out.println("4 - Iniciar novo pedido");
         System.out.println("5 - Fechar pedido");
         System.out.println("6 - Listar produtos dos pedidos mais recentes");
+        System.out.println("7 - Exibir o faturamento do comércio de produtos");
+        System.out.println("8 - Exibir a quantidade de pedidos realizados em um determinado período");
         System.out.println("0 - Sair");
         System.out.print("Digite sua opção: ");
         return Integer.parseInt(teclado.nextLine());
@@ -215,6 +221,18 @@ public class App {
     	
     	// TODO
     }
+
+    public static void exibirPedidosPeriodo(){
+        LocalDate dataInicio = null;
+        LocalDate dataFim = null;  
+        int quantidade = listaPedidos.contar(p -> p.getDataPedido().isAfter(dataInicio) && p.getDataPedido().isBefore(dataFim));
+        System.out.println("Quantidade de pedidos realizados entre as datas informadas: "+quantidade);
+    }
+
+    public static void exibirFaturamento(){
+        double faturamento = listaPedidos.obterSoma(Pedido::valorFinal);
+        System.out.println("Faturamento do comércio de produtos: R$ "+faturamento);
+    }
     
 	public static void main(String[] args) {
 		
@@ -236,6 +254,8 @@ public class App {
                 case 4 -> pedido = iniciarPedido();
                 case 5 -> finalizarPedido(pedido);
                 case 6 -> listarProdutosPedidosRecentes();
+                case 7 -> exibirFaturamento();
+                case 8 -> exibirPedidosPeriodo();
             }
             pausa();
         }while(opcao != 0);       
